@@ -6,15 +6,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="FSharp.Text.RegexProvider" Version="2.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="RegexdotNet.fs" />  
-    <Compile Include="RegexFSharp.fs" />  
     <Compile Include="ExpertFSharpCh08.fs" />
   </ItemGroup>
-
-
 
 </Project>

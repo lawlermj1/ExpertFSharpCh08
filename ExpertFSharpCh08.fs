@@ -2,8 +2,20 @@
 
 open System 
 open System.IO  
-open RegexdotNet 
-open RegexFSharp 
+
+let date x = DateTime.Parse(x) 
+
+let splitLine (line : string) = line.Split ',' |> Array.map (fun s -> s.Trim()) 
+
+let parseEmployee (line : string) = 
+    match splitLine line with 
+    | [|last; first; startDate; title |] -> 
+        last, first, System.DateTime.Parse(startDate), title
+    | _ -> 
+        failwithf "invalid employee format: '%s'" line 
+
+let readEmployees (fileName : string) = 
+    fileName |> File.ReadLines |> Seq.map parseEmployee 
 
 [<EntryPoint>]
 let main argv =
@@ -34,41 +46,7 @@ let main argv =
     printfn "parseEmployee = %A " (parseEmployee line) 
     File.WriteAllLines("employee.txt", Array.create 10000 line) 
     let firstThree = readEmployees "employee.txt" |> Seq.truncate 3 |> Seq.toList
-
-    let samplestring = "This is a string"  
-    printfn "regextest = %A " (samplestring =~ "(is )+")  
-    printfn "regex1 = %A " (regex(" ").Split("This is a string"))  
-    printfn "regex1 = %A " (regex(@"\s+").Split("I'm a little     teapot"))  
-    printfn "regex1 = %A " (regex(@"\s+").Split("I'm a little \t\t\n\t\n\t teapot")) 
-    let m = regex("joe").Match("maryjoewashere") 
-    if m.Success then printfn "Matched at position %d" m.Index   
-    let text2 = "was a dark and stormy night"  
-    let t2 = regex(@"\w+").Replace(text2, "WORD") 
-
-    let entry = @"
-Jolly Jethro
-13 Kings Parade 
-Cambridge, Cambs CB2 1TJ
-"
-    let r = AddrBlk.Match(entry) 
-    printfn "city = %A " r.Groups.["city"].Value  
-    printfn "county = %A " r.Groups.["county"].Value  
-    printfn "pcode = %A " r.Groups.["pcode"].Value 
-
-// uses active pattern in the match 
-    printfn "pcode = %A " (
-        match "This is a string" with 
-        | IsMatch "(?i)HIS" -> "yes, it matched"
-        | IsMatch "ABC" -> "this would not match"
-        | _ -> "nothing matched") 
-
-    printfn "firstAndSecondWord = %A " (firstAndSecondWord "This is a super string")  
-    printfn "firstAndSecondWord2 = %A " (firstAndSecondWord2 "This is a super string") 
-
-    let resP = PhoneRegex().Match("425-123-2345") 
-//    printfn "AreaCode = %A" resP.AreaCode.Value 
-    printfn "AreaCode = %A" resP.Groups.["AreaCode"].Value   
-
+    
     printfn " "
     printfn "All finished from ExpertF#Ch08" 
     0 // return an integer exit code
